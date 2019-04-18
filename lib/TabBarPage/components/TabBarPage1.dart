@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-
-/**
- * Created by guoshuyu
- * on 2018/7/29.
- */
+import 'package:fly/common/api/http.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class TabBarPage1 extends StatefulWidget {
   @override
@@ -12,51 +9,104 @@ class TabBarPage1 extends StatefulWidget {
 
 class _TabBarPage1State extends State<TabBarPage1> with AutomaticKeepAliveClientMixin {
   final _suggestions = <String>[];
-
   final _biggerFont = const TextStyle(fontSize: 18.0);
+  List<int> items = List.generate(15, (i) => i);
+  ScrollController _scrollController = new ScrollController();
+  bool isPerformingRequest = false;
 
-  Widget _buildRow(String pair) {
+  _getMoreData() async {
+    List<int> newEntries = await fakeRequest(items.length, items.length + 15);
+    if(items.length > 40) {
+      double edge = 50.0;
+      double offsetFromBottom = _scrollController.position.maxScrollExtent - _scrollController.position.pixels;
+      if (offsetFromBottom < edge) {
+        _scrollController.animateTo(
+            _scrollController.offset - (edge -offsetFromBottom),
+            duration: new Duration(milliseconds: 500),
+            curve: Curves.easeOut);
+        setState(() {
+          isPerformingRequest = false;
+        });
+      }
+    } else {
+      setState(() {
+        items.addAll(newEntries);
+        isPerformingRequest = false;
+      });
+    }
+  }
+
+  _getLoadData() {
+    if(!isPerformingRequest) {
+      setState(() => isPerformingRequest = true);
+      _getMoreData();
+    }
+  }
+
+  _getPullData() {
+    _getMoreData();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        _getLoadData();
+      }
+    });
+  }
+
+
+  Widget _buildRow(index) {
     return new ListTile(
-      title: new Text(
-        pair,
-        style: _biggerFont,
+      title: new Text("Number $index")
+    );
+  }
+
+  Widget _buildProgressIndicator() {
+    return new Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: new Center(
+        child: new Opacity(
+          opacity: isPerformingRequest ? 1.0 : 0.0,
+          child: SpinKitFadingCircle(
+            itemBuilder: (_, int index) {
+              return DecoratedBox(
+                decoration: BoxDecoration(
+                  color: index.isEven ? Colors.red : Colors.green,
+                ),
+              );
+            },
+          )
+        ),
       ),
     );
   }
 
-  generateWordPairs() {
-    return [
-      "11111",
-      "222222",
-      "3333333",
-      "4444444",
-      "11111",
-      "222222",
-      "3333333",
-      "4444444",
-      "11111",
-      "222222",
-      "3333333",
-      "4444444",
-      "11111",
-      "222222",
-      "3333333",
-      "4444444"
-    ];
+  Widget _buildSuggestions() {
+    return new RefreshIndicator(
+      onRefresh: () => _refresh(),
+      child: new ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemBuilder: (context, index) {
+          if(index == items.length) {
+            return _buildProgressIndicator();
+          } else {
+            return _buildRow(index);
+          }
+        },
+        itemCount: items.length + 1,
+        controller: _scrollController,
+      )
+    );
+        
   }
 
-  Widget _buildSuggestions() {
-    return new ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return new Divider();
-          final index = i ~/ 2;
-          // 如果是建议列表中最后一个单词对
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs());
-          }
-          return _buildRow(_suggestions[index]);
-        });
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -66,5 +116,10 @@ class _TabBarPage1State extends State<TabBarPage1> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context); // See AutomaticKeepAliveClientMixin.
     return _buildSuggestions();
+  }
+  Future<Null> _refresh() async {
+    items.clear();
+    await _getPullData();
+    return;
   }
 }
