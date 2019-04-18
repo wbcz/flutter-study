@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:fly/DemoItem.dart';
-
-class DemoPage extends StatefulWidget {
-  List<String> items;
-  DemoPage(this.items);
+import 'package:fly/ListView/DemoItem.dart';
+class ListDemo extends StatefulWidget {
+  List<String> items = new List<String>.generate(10000, (i) => "Item $i");
 
   @override
   _DemoPageState createState() => _DemoPageState(this.items);
 }
 
-class _DemoPageState extends State<DemoPage> {
+class _DemoPageState extends State<ListDemo> {
   List<String> items;
   _DemoPageState(this.items);
   @override
