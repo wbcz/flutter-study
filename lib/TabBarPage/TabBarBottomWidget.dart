@@ -18,7 +18,7 @@ class _TabBarBottomPageWidgetState extends State<TabBarBottomPageWidget> {
   final PageController topPageControl = new PageController();
 
 
-  final List<String> tab = ["动态", "趋势"];
+  final List<String> tab = ["30m","1h","3h","6h","1d", "7d"];
 
   _renderTab() {
     List<Widget> list = new List();
@@ -38,8 +38,24 @@ class _TabBarBottomPageWidgetState extends State<TabBarBottomPageWidget> {
 
   _renderPage() {
     return [
-      new TabBarPage1(),
-      new TabBarPage2(),
+      new TabBarPage2(
+        time: "30m"
+      ),
+      new TabBarPage2(
+        time: "1h"
+      ),
+      new TabBarPage2(
+        time: "3h"
+      ),
+      new TabBarPage2(
+        time: "6h"
+      ),
+      new TabBarPage2(
+        time: "1d"
+      ),
+      new TabBarPage2(
+        time: "7d"
+      )
     ];
   }
 
@@ -55,6 +71,6 @@ class _TabBarBottomPageWidgetState extends State<TabBarBottomPageWidget> {
         topPageControl: topPageControl,
         backgroundColor: Colors.black45,
         indicatorColor: Colors.red,
-        title: new Text("TabBarBottomPageWidget"));
+        title: new Text("release"));
   }
 }

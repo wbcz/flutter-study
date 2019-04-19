@@ -68,8 +68,6 @@ class __TabBarWidget extends State<TabBarWidget> with SingleTickerProviderStateM
 
   TabController _tabController;
 
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -117,20 +115,8 @@ class __TabBarWidget extends State<TabBarWidget> with SingleTickerProviderStateM
               ///页面触摸作用滑动回调，用于同步tab选中状态
               _tabController.animateTo(index);
             },
-          ),
-          ///底部导航栏，也就是tab栏
-          bottomNavigationBar: new Material(
-            // color: _backgroundColor,
-            // ///tabBar控件
-            // child: new TabBar(
-            //   ///必须有的控制器，与pageView的控制器同步
-            //   controller: _tabController,
-            //   ///每一个tab item，是一个List<Widget>
-            //   tabs: _tabItems,
-            //   ///tab底部选中条颜色
-            //   indicatorColor: _indicatorColor,
-            // ),
-          ));
+          )
+      );
     }
 }
 

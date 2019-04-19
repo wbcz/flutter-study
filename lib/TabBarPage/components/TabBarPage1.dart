@@ -6,7 +6,6 @@ class TabBarPage1 extends StatefulWidget {
   @override
   _TabBarPage1State createState() => _TabBarPage1State();
 }
-
 class _TabBarPage1State extends State<TabBarPage1> with AutomaticKeepAliveClientMixin {
   final _suggestions = <String>[];
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -60,7 +59,7 @@ class _TabBarPage1State extends State<TabBarPage1> with AutomaticKeepAliveClient
 
   Widget _buildRow(index) {
     return new ListTile(
-      title: new Text("Number $index")
+      title: new Text("火车票 $index")
     );
   }
 
